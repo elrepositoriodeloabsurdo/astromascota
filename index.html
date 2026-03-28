@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Astro Mascota | El Repositorio de lo Absurdo</title>
+    <link rel="manifest" href='data:application/json,{"name":"Astro Mascota","short_name":"AstroPet","start_url":".","display":"standalone","background_color":"#0a0618","theme_color":"#e8b86d","icons":[{"src":"https://fav.farm/✨","sizes":"192x192","type":"image/png"}]}'>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        /* Estilos base del archivo original con toques de PWA */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+        :root{--bg:#0a0618;--card:#120f24;--gold:#e8b86d;--ink:#f0e8d8;--border:#2a2040}
+        body{background:var(--bg);color:var(--ink);font-family:'Crimson Text',serif;margin:0;overflow-x:hidden}
+        .app{max-width:600px;margin:0 auto;padding:20px;animation:fade 0.5s ease;}
+        @keyframes fade{from{opacity:0}to{opacity:1}}
+        header{text-align:center;padding:30px 0;border-bottom:1px solid var(--border)}
+        .brand{font-family:'Cinzel',serif;color:var(--gold);font-size:24px;letter-spacing:2px}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:15px;padding:25px;margin-top:20px;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+        .btn{width:100%;padding:15px;border-radius:10px;border:none;font-family:'Cinzel',serif;font-weight:700;cursor:pointer;margin-top:10px;transition:0.3s}
+        .btn-main{background:var(--gold);color:var(--bg)}
+        .btn-wa{background:#25D366;color:white;margin-top:20px}
+        .btn-voice{background:transparent;border:1px solid var(--gold);color:var(--gold)}
+        .result{font-style:italic;line-height:1.6;font-size:18px;margin:20px 0;color:var(--ink)}
+        input, select{width:100%;padding:12px;background:#1a1630;border:1px solid var(--border);color:white;margin-bottom:15px;border-radius:8px}
+        footer{text-align:center;font-size:10px;opacity:0.5;padding:40px}
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const { useState } = React;
+        function App() {
+            const [name, setName] = useState("");
+            const [signo, setSigno] = useState("Aries");
+            const [result, setResult] = useState(null);
+
+            const leerDestino = () => {
+                const predicciones = [
+                    "Los astros indican que hoy confundirás un calcetín con un enemigo mortal. Ten cuidado.",
+                    "Mercurio retrógrado afectará tu puntería con la pelota. No te frustres, es el cosmos.",
+                    "Una conjunción de Júpiter sugiere que recibirás un premio extra si pones cara de pena.",
+                    "Saturno dice que es un gran día para dormir 18 horas seguidas sobre el teclado de tu humano."
+                ];
+                const p = predicciones[Math.floor(Math.random()*predicciones.length)];
+                setResult(`¡Escucha, oh ${name}! Los astros dictan para ${signo}: ${p}`);
+            };
+
+            const hablar = () => {
+                window.speechSynthesis.cancel();
+                const msg = new SpeechSynthesisUtterance(result);
+                msg.lang = 'es-ES'; msg.pitch = 1.2; // Voz mística
+                window.speechSynthesis.speak(msg);
+            };
+
+            const compartirWA = () => {
+                const url = `https://wa.me/?text=${encodeURIComponent("✨ Horóscopo Mascota:\n" + result)}`;
+                window.open(url, '_blank');
+            };
+
+            return (
+                <div className="app">
+                    <header><div className="brand">✨ ASTRO MASCOTA</div></header>
+                    <div className="card">
+                        <label>Nombre de la criatura:</label>
+                        <input value={name} onChange={e=>setName(e.target.value)} placeholder="Ej: Firulais" />
+                        <label>Signo Zodiacal:</label>
+                        <select value={signo} onChange={e=>setSigno(e.target.value)}>
+                            <option>Aries</option><option>Tauro</option><option>Gato</option><option>Pez</option>
+                        </select>
+                        <button className="btn btn-main" onClick={leerDestino}>CONSULTAR COSMOS</button>
+                    </div>
+                    {result && (
+                        <div className="card" style={{borderColor:'var(--gold)'}}>
+                            <div className="result">{result}</div>
+                            <button className="btn btn-voice" onClick={hablar}>🔊 Escuchar Oráculo</button>
+                            <button className="btn btn-wa" onClick={compartirWA}>🟢 Enviar a WhatsApp</button>
+                        </div>
+                    )}
+                    <footer>EL REPOSITORIO DE LO ABSURDO</footer>
+                </div>
+            );
+        }
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
